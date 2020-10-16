@@ -1,37 +1,35 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
+
 #include "socket.h"
 
-#define SOCKTS_EN_COLA 10
+#define SOCKTS_EN_COLA 1
 
 int socket_init(socket_t *self) {
-	self->s = -1;
+	self->fd = 0;
 
 	return 0;
 }
 
 
 int socket_uninit(socket_t *self) {
-	socket_close(self);
-	
-	self->s = -1;
-
+	if (socket_close(self)){
+		return -1;
+	}
 	return 0;
 }
 
-
-int socket_bind_and_listen(socket_t *self, const char *host, const char *service) {
+int socket_get_addresses(socket_t *self, const char *host, const char *service, bool is_server){
 	int status = 0;
 
 	struct addrinfo hints;
-   	
-   	struct addrinfo *results, *ptr;
 	
 	memset(&hints, 0, sizeof(struct addrinfo));
    	
@@ -39,157 +37,167 @@ int socket_bind_and_listen(socket_t *self, const char *host, const char *service
    	
    	hints.ai_socktype = SOCK_STREAM; 
    	
-   	hints.ai_flags = AI_PASSIVE;              
+   	if(is_server){
+   		hints.ai_flags = AI_PASSIVE;
+   	} else {
+   		hints.ai_flags = 0;
+   	}              
 
-   	status = getaddrinfo(NULL, service, &hints, &results); 
+   	status = getaddrinfo(host, service, &hints, &(self->results_getaddr)); 
 
-	socket_status_error(self, status);
+   	if (status != 0) {
+   		fprintf(stderr, "Error in getaddrinfo:%s\n", gai_strerror(status));
+   		
+   		socket_close(self);
 
-   	for (ptr = results; ptr != NULL; ptr = ptr->ai_next) {
-   		self->s = socket(ptr->ai_family, ptr->ai_socktype,
+   		freeaddrinfo(self->results_getaddr);
+
+   		return -1;
+   	}
+
+   	return 0;
+}
+
+int socket_bind(socket_t *self) {
+	struct addrinfo *ptr;
+
+	int val = 1;
+   	setsockopt(self->fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));//hacer otra func
+
+   	for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
+   		self->fd = socket(ptr->ai_family, ptr->ai_socktype,
    					ptr->ai_protocol);
    		
-   		if (self->s == -1) continue;
+   		if (self->fd == -1) continue;
 
-   		if (bind(self->s, ptr->ai_addr, ptr->ai_addrlen) == 0){
-   			printf("Conexion exitosa\n");
+   		if (bind(self->fd, ptr->ai_addr, ptr->ai_addrlen) == 0){
+   			printf("Conexion exitosa\n");//al final borrar este print
    			
    			break;
    		}
 
-   		close(self->s);
+   		close(self->fd);
    	}
 
    	if (ptr == NULL) {     
-   		fprintf(stderr, "Conexion fallida\n");
+   		fprintf(stderr, "Conexion fallida\n");//al final borrar este print
 
    		socket_close(self);
         
-        return 1;
+        return -1;
     }
 
-   	freeaddrinfo(results);
-
-   	status = listen(self->s, SOCKTS_EN_COLA);
-
-   	socket_status_error(self, status);
+   	freeaddrinfo(self->results_getaddr);
 
    	return 0;
 }
 
+int socket_listen(socket_t *self) {
+	int status = listen(self->fd, SOCKTS_EN_COLA);
+	if(status) {
+		fprintf(stderr, "Error in socket_listen:%s\n", strerror(status));
+		return -1;
+	}
+
+   	return 0;
+}
 
 int socket_accept(socket_t *listener, socket_t *peer) {
-	int accepted = accept(listener->s, NULL, NULL); 
+	int accepted = accept(listener->fd, NULL, NULL); 
 
-	//socket_status_error(listener, status);
-	//fprintf(stderr, "Todo OK\n");
+	if(accepted == -1){
+		fprintf(stderr, "Error in socket_accept:%s\n", strerror(accepted));
+		return -1;
+	}
 
-   	peer->s = accepted;
+   	peer->fd = accepted;
    	
    	return 0;
 }
 
 
-int socket_connect(socket_t *self, const char *host, const char *service) {
-	int status = 0;
+int socket_connect(socket_t *self) {
+	struct addrinfo *ptr;
 
-	struct addrinfo hints;
-   	
-   	struct addrinfo *results, *ptr;
-	
-	memset(&hints, 0, sizeof(struct addrinfo));
-   	
-   	hints.ai_family = AF_INET;       
-   	
-   	hints.ai_socktype = SOCK_STREAM; 
-   	
-   	hints.ai_flags = 0;              
-
-   	status = getaddrinfo(host, service, &hints, &results); 
-
-   	socket_status_error(self, status);
-
-   	int val = 1;
-   	setsockopt(self->s, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-
-   	for (ptr = results; ptr != NULL; ptr = ptr->ai_next) {
-   		self->s = socket(ptr->ai_family, ptr->ai_socktype,
+   	for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
+   		self->fd = socket(ptr->ai_family, ptr->ai_socktype,
    					ptr->ai_protocol);
    		
-   		if (self->s == -1) continue;
+   		if (self->fd == -1) continue;
 
-   		if (connect(self->s, ptr->ai_addr, ptr->ai_addrlen) != -1) {
-   			printf("Conexion exitosa\n");
+   		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen) != -1) {
+   			printf("Conexion exitosa\n");//al final borrar este print
    			
    			break;
    		}
 
-   		close(self->s);
+   		close(self->fd);
    	}
 
    	if (ptr == NULL) {     
-   		fprintf(stderr, "Conexion fallida\n");
+   		fprintf(stderr, "Conexion fallida\n");//al final borrar este print
         
         socket_close(self);
 
-        return 1;
+        return -1;
     }
 
-   	freeaddrinfo(results);
+   	freeaddrinfo(self->results_getaddr);
 
    	return 0;
 }
 
 
-ssize_t socket_send(socket_t *self, char *buffer, size_t lenght) {
+int socket_send(socket_t *self, char *buffer, size_t buffer_size) {
 	int n = 0;
+	int status = 0;
 
-	while (n < lenght) {
-		int status = send(self->s, buffer, lenght-n, MSG_NOSIGNAL);
+	while (n < buffer_size) {
+		status = send(self->fd, &buffer[n], buffer_size-n, MSG_NOSIGNAL);
 
 		if (status == -1){
-			printf("Error: %s\n", strerror(errno));
+			printf("Error in socket_send: %s\n", strerror(errno));
 
 			socket_close(self);
 			
-			return 1;
+			return -1;
+		} else if (status == 0){
+			return 0;
 		} else {
 			n += status;
 		}
 	}
+	return 0;
 }
 
 
-ssize_t socket_receive(socket_t *self, char *buffer, size_t buffer_size) {
+int socket_receive(socket_t *self, char *buffer, size_t buffer_size) {
+	int n = 0;
 	int status = 0;
 
-	for(int pos = 0; pos < buffer_size; pos += status){
-		int status = recv(self->s, &buffer[pos], buffer_size-pos, 0);
+	while (n < buffer_size) {
+		status = recv(self->fd, &buffer[n], buffer_size-n, 0);
 		
-		if (status == 0) {
-			fprintf(stderr, "Error:%s\n", strerror(status)); 
+		if (status == -1) {
+			fprintf(stderr, "Error in socket_receive:%s\n", strerror(status)); 
    			
    			socket_close(self);
-		} else if (status == -1) {
-			socket_status_error(self,status);
+
+   			return -1;
+		} else if (status == 0) {
+			return 0;
+		} else {
+			n += status;
 		}
 	}
+	return 0;
 }
 
-void socket_close(socket_t *self) {
-	shutdown(self->s, SHUT_RDWR);
+int socket_close(socket_t *self) {
+	shutdown(self->fd, SHUT_RDWR);
 	
-	close(self->s);
-}
-
-int socket_status_error(socket_t *self, int status) {
-   	if (status != 0) {
-   		fprintf(stderr, "Error:%s\n", strerror(status)); //chequear si quiero pasarlo por stderr
-   		
-   		socket_close(self);
-
-   		return 1;
-   	}
-
-   	return 0;
+	if(close(self->fd)){
+		return -1;
+	}
+	return 0;
 }

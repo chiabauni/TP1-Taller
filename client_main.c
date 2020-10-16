@@ -4,19 +4,16 @@
 
 int main(int argc, char *argv[]) {
 	client_t client;
-	const char *hostname;
-	const char *servicename;
+	const char *method;
+	const char *key;
 
-	if (argc == 3) {
-		hostname = argv[1];
+	//client_set_arguments(&client, argc, argv, method, key);
 
-		servicename = argv[2];
-	} else {
-		printf("Cantidad erronea de argumentos\n");
-		return 1;
-	}
+	client_init(&client, argv[1], argv[2]);
 
-	client_init(&client, hostname, servicename);
+	client_get_input(&client, argv[5]);
+
+	client_connect(&client);
 
 	client_send(&client);
 

@@ -1,10 +1,10 @@
-
 #include <stdio.h>
+#include <string.h>
 
 #define MAX 64
 
-//void cesar_descifrado(char* buffer, unsigned int key);
-//void cesar_cifrado(char* buffer, unsigned int key);
+/*void cesar_descifrado(char* buffer, unsigned int key);
+void cesar_cifrado(char* buffer, unsigned int key);*/
 
 void cesar_cifrado(char* buffer, unsigned int key){
 	for (int i = 0; buffer[i] != '\0'; i++){
@@ -31,11 +31,11 @@ void cesar_descifrado(char* buffer, unsigned int key){
 	}
 }
 
-/*int main(void) {
+i/*nt main(void) {
 	//unsigned char buffer[] = {254, 5, 2, 247, 16, 241, 17, 182, 19};
-	unsigned char buffer[] = "holaz[{ }";
-	
-	unsigned int key = 150;
+	//unsigned char buffer[] = "holaz[{ }";
+	unsigned char buffer[] = "Pan";
+	unsigned int key = 5;
 
 	cesar_cifrado(buffer, key);
 	
@@ -49,7 +49,7 @@ void cesar_descifrado(char* buffer, unsigned int key){
 	cesar_descifrado(buffer, key);
 
 	printf("%s\n", buffer);
-	
+
 	return 0;
 }
 */

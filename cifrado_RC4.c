@@ -4,9 +4,9 @@
 
 #define MAX_SIZE 256
 
-void swap(unsigned char* x, unsigned char* y);
-int KSA(unsigned char* key, unsigned char* S);
-int PRGA(unsigned char* S, char* buffer, char* result);
+//void swap(unsigned char* x, unsigned char* y);
+//int KSA(unsigned char* key, unsigned char* S);
+//int PRGA(unsigned char* S, char* buffer, char* result);
 
 void swap(unsigned char* x, unsigned char* y) {
     unsigned char temp = *x;
@@ -51,7 +51,7 @@ int PRGA(unsigned char* S, char* buffer, char* result) {
     return 0;
 }
 
-int main() {
+/*int main() {
     unsigned char key[]= "queso";
 
     unsigned char buffer[] = "Pan";
@@ -64,11 +64,21 @@ int main() {
 
     PRGA(S, buffer, result);
 
+    for(size_t i = 0; i < strlen(result); i++){
+        printf("%x\n",result[i]);
+    }
+
+    printf("---------------------\n");
+
+    KSA(key, S);
+
+    PRGA(S, result, buffer);
+
     for(size_t i = 0; i < strlen(buffer); i++){
-        printf("%02X\n",buffer[i]);
+        printf("%x\n",buffer[i]);
     }
 
     free(result);
 
     return 0;
-}
+}*/

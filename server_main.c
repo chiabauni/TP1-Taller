@@ -1,29 +1,33 @@
 #include <stdio.h>
-#include "socket.h"
-#include "client_socket.h"
+#include "server_socket.h"
 
 
 #define BUFF_SIZE 64
 
+/*static void _receive_buffer(const char *buffer, 
+                      size_t buffer_size,
+                      void *callback_ctx) {
+  server_t *socket = callback_ctx;
+  if (socket_receive(&(self->peer), buffer, buffersize)) {
+    return -1;
+  }
+  return 0;
+}*/
+
 int main(int argc, char *argv[]) {
-  socket_t server;
+  server_t server;
 
-  char buffer[BUFF_SIZE];
+  //har buffer[BUFF_SIZE];
   
-  const char *hostname = "localhost";
+  //const char *hostname = "localhost";
 
-  const char *servicename = "7777";
+  //const char *servicename = "7777";
 
-  socket_init(&server);
+  server_init(&server, argv[1]);
 
-  socket_bind_and_listen(&server, hostname, servicename);
+  server_connect(&server);
 
-  client_t client;
-  socket_t peer = client->sockt;
+  //server_receive(&server);
 
-  socket_accept(&server, &peer);
-
-  //socket_receive(&client, buffer, sizeof(buffer));
-
-  socket_uninit(&server);
+  server_uninit(&server);
 }

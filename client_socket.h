@@ -10,17 +10,23 @@
 
 typedef struct{
 	socket_t sockt;
-	file_reader_t fr;
+	const char* hostname;
+	const char* servicename;
+	FILE *fp;
 } client_t;
 
-int client_init(client_t *self,const char *hostname, const char *servicename);
+typedef void (*client_socket_callback_t)(const char *buffer, 
+	                                   size_t buffer_size,
+	                                   void *callback_ctx);
+
+int client_init(client_t *self, const char* hostname, const char* servicename);
 
 int client_uninit(client_t *self);
 
-int client_send(client_t *self);
+int client_get_input(client_t *self, const char* file_name);
 
-static void _send_buffer(char *buffer, 
-	                    size_t buffer_size,
-	                    void *callback_context);
+int client_connect(client_t *self);
+
+int client_send(client_t *self);
 
 #endif
