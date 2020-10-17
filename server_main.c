@@ -1,33 +1,34 @@
 #include <stdio.h>
 #include "server_socket.h"
 
-
-#define BUFF_SIZE 64
-
-/*static void _receive_buffer(const char *buffer, 
-                      size_t buffer_size,
-                      void *callback_ctx) {
-  server_t *socket = callback_ctx;
-  if (socket_receive(&(self->peer), buffer, buffersize)) {
-    return -1;
-  }
-  return 0;
-}*/
+#define ARGUMENT_ERROR 1
+#define INIT_ERROR 2
+#define CONNECT_ERROR 3
+#define RECEIVE_ERROR 4
+#define UNINIT_ERROR 2
 
 int main(int argc, char *argv[]) {
+  if (argc != 4) {
+    fprintf(stderr, "Error in arguments: ./server <server-port> --method=<method> --key=<key>\n");
+    return ARGUMENT_ERROR;
+  }
+
   server_t server;
 
-  //har buffer[BUFF_SIZE];
-  
-  //const char *hostname = "localhost";
+  if (server_init(&server, argv[1], argv[2], argv[3])) {
+    return INIT_ERROR;
+  }
 
-  //const char *servicename = "7777";
+  if (server_connect(&server)) {
+    return CONNECT_ERROR;
+  }
 
-  server_init(&server, argv[1]);
+  if (server_receive(&server)) {
+    return RECEIVE_ERROR;
+  }
 
-  server_connect(&server);
-
-  //server_receive(&server);
-
-  server_uninit(&server);
+  if (server_uninit(&server)) {
+    return UNINIT_ERROR;
+  }
+  return 0;
 }

@@ -13,12 +13,12 @@ typedef struct{
 	const char* servicename;
 } server_t;
 
-int server_init(server_t *self, const char* servicename);
+int server_init(server_t *self, const char* servicename, char* method, void* key);
 
 int server_uninit(server_t *self);
 
 int server_connect(server_t *self);
 
-//int server_receive(server_t *self);
+int server_receive(server_t *self);
 
 #endif

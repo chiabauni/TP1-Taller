@@ -7,7 +7,7 @@
 
 //void vigenere_descifrado(char* buffer, char* key);
 
-void vigenere_cifrado(char* buffer, char* key){
+void vigenere_cifrado(unsigned char* buffer, char* key){
 	int i = 0;
 	int j = 0;
 
@@ -27,7 +27,7 @@ void vigenere_cifrado(char* buffer, char* key){
 	}
 }
 
-void vigenere_descifrado(char* buffer, char* key){
+void vigenere_descifrado(unsigned char* buffer, char* key){
 	int i = 0;
 	int j = 0;
 

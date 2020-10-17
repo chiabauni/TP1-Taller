@@ -1,23 +1,40 @@
 #include <stdio.h>
 #include "client_socket.h"
 
+#define ARGUMENT_ERROR 1
+#define INIT_ERROR 2
+#define INPUT_ERROR 3
+#define CONNECT_ERROR 4
+#define SEND_ERROR 5
+#define UNINIT_ERROR 6
+
 
 int main(int argc, char *argv[]) {
 	client_t client;
-	const char *method;
-	const char *key;
 
-	//client_set_arguments(&client, argc, argv, method, key);
+	if (argc < 4 || argc > 5) {
+		fprintf(stderr, "Error in arguments:./client <server-host> <server-port> --method=<method> --key=<key>\n");
+		return ARGUMENT_ERROR;
+	}
 
-	client_init(&client, argv[1], argv[2]);
+	if (client_init(&client, argv[1], argv[2], argv[3], argv[4])) {
+		return INIT_ERROR;
+	}
 
-	client_get_input(&client, argv[5]);
+	if (client_get_input(&client, argv[5])) {
+		return INPUT_ERROR;
+	}
 
-	client_connect(&client);
+	if (client_connect(&client)) {
+		return CONNECT_ERROR;
+	}
 
-	client_send(&client);
+	if (client_send(&client)) {
+		return SEND_ERROR;
+	}
 
-	client_uninit(&client);
-	
+	if (client_uninit(&client)) {
+		return UNINIT_ERROR;
+	}
 	return 0;
 }

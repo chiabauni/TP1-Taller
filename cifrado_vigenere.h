@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-void vigenere_cifrado(char* buffer, char* key);
+void vigenere_cifrado(unsigned char* buffer, char* key);
 
-void vigenere_descifrado(char* buffer, char* key);
+void vigenere_descifrado(unsigned char* buffer, char* key);
 
 #endif

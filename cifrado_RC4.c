@@ -3,6 +3,7 @@
 #include <stdlib.h>
 
 #define MAX_SIZE 256
+#define BUFF_SIZE 64
 
 //void swap(unsigned char* x, unsigned char* y);
 //int KSA(unsigned char* key, unsigned char* S);
@@ -49,6 +50,16 @@ int PRGA(unsigned char* S, char* buffer, char* result) {
 
     }
     return 0;
+}
+
+void rc4_cifrado(char* buffer, char* key) {
+    unsigned char S[MAX_SIZE];
+
+    unsigned char result[BUFF_SIZE]; 
+    
+    KSA(key, S);
+
+    PRGA(S, buffer, result);
 }
 
 /*int main() {

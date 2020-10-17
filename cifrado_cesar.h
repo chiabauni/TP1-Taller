@@ -3,8 +3,8 @@
 
 #include <stdio.h>
 
-void cesar_cifrado(char* buffer, unsigned int key);
+void cesar_cifrado(unsigned char* buffer, unsigned char* string_key);
 
-void cesar_descifrado(char* buffer, unsigned int key);
+void cesar_descifrado(unsigned char* buffer, unsigned char* string_key);
 
 #endif

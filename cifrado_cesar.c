@@ -1,12 +1,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#define MAX 64
+//#define MAX 64
 
-/*void cesar_descifrado(char* buffer, unsigned int key);
-void cesar_cifrado(char* buffer, unsigned int key);*/
+/*void cesar_descifrado(unsigned char* buffer, unsigned char* string_key);
+void cesar_cifrado(unsigned char* buffer, unsigned char* string_key);*/
 
-void cesar_cifrado(char* buffer, unsigned int key){
+void cesar_cifrado(unsigned char* buffer, unsigned char* string_key){
+	unsigned int key = (unsigned int)string_key[0];
+
 	for (int i = 0; buffer[i] != '\0'; i++){
 		
 		unsigned char a =  ((unsigned int)buffer[i] + key)%256;
@@ -15,7 +17,9 @@ void cesar_cifrado(char* buffer, unsigned int key){
 	}
 }
 
-void cesar_descifrado(char* buffer, unsigned int key){
+void cesar_descifrado(unsigned char* buffer, unsigned char* string_key){
+	unsigned int key = (unsigned int)string_key[0];
+	
 	for (int i = 0; buffer[i] != '\0'; i++){
 		
 		if(buffer[i] < key){
@@ -31,16 +35,16 @@ void cesar_descifrado(char* buffer, unsigned int key){
 	}
 }
 
-i/*nt main(void) {
+/*int main(void) {
 	//unsigned char buffer[] = {254, 5, 2, 247, 16, 241, 17, 182, 19};
 	//unsigned char buffer[] = "holaz[{ }";
 	unsigned char buffer[] = "Pan";
-	unsigned int key = 5;
+	unsigned char key[] = {5};
 
 	cesar_cifrado(buffer, key);
 	
 	for(int i = 0; buffer[i] != '\0'; i++){
-		printf("%d\n", buffer[i]);
+		printf("%x\n", buffer[i]);
 
 	}
 	
@@ -51,5 +55,4 @@ i/*nt main(void) {
 	printf("%s\n", buffer);
 
 	return 0;
-}
-*/
+}*/

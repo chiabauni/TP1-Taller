@@ -5,40 +5,72 @@
 #include "cifrado_vigenere.h"
 #include "cifrado_RC4.h"
 
-int cipher_init(cifrado_t *self, const char* method, const char* key, char* buffer) {
-	self->method = method;
+#define CESAR 0
+#define VIGENERE 1
+#define RC4 2
+
+
+int cipher_init(cipher_t *self, char* method, void* key) {
+	char cesar[] = "cesar";
+	char vigenere[] = "vigenere";
+	char rc4[]= "rc4";
+	
+	if (method[0] == cesar[0]) {
+		self->method = CESAR;
+	} 
+	if (method[0] == vigenere[0]) {
+		self->method = VIGENERE;
+	} 
+	if (method[0] == rc4[0]) {
+		self->method = RC4;
+	} 
+
 	self->key = key;
+	return 0;
+}
+
+int cipher_uninit(cipher_t *self) {
+
+	return 0;
+}
+
+void cipher_encode(cipher_t *self, char* buffer) {
 	self->buffer = buffer;
-	return 0;
-}
-
-int cipher_uninit(cifrado_t *self) {
-	self->method = -1;
-	self->key = -1;
-	self->buffer = -1;
-	return 0;
-}
-
-int cipher_encode(cifrado_t *self) {
-	if (&(self->method) == "cesar") {
-		cesar_cifrado(&(self->buffer), &(self->key));
+	if (self->method == 0) {
+		cesar_cifrado(self->buffer, self->key);
 	} 
-	if (&(self->method) == "vigenere") {
-		vigenere_cifrado(&(self->buffer), &(self->key))
+	if (self->method == 1) {
+		vigenere_cifrado(self->buffer, self->key);
 	}
-	if (&(self->method) == "rc4") {
-		rc4_cifrado(&(self->buffer), &(self->key))
+	if (self->method == 2) {
+		rc4_cifrado(self->buffer, self->key);
 	}
 }
 
-int cifrado_decode(cifrado_t *self) {
-	if (&(self->method) == "cesar") {
-		cesar_descifrado(&(self->buffer), &(self->key));
+void cipher_decode(cipher_t *self, char* buffer) {
+	self->buffer = buffer;
+	if (self->method == 0) {
+		cesar_descifrado(self->buffer, self->key);
 	} 
-	if (&(self->method) == "vigenere") {
-		vigenere_descifrado(&(self->buffer), &(self->key))
+	if (self->method == 1) {
+		vigenere_descifrado(self->buffer, self->key);
 	}
-	if (&(self->method) == "rc4") {
-		rc4_descifrado(&(self->buffer), &(self->key))
+	if (self->method == 2) {
+		rc4_cifrado(self->buffer, self->key);
 	}
 }
+
+/*int main(){
+	cipher_t cipher;
+	char method[] = "cesar";
+	char key[] = {5};
+	char buffer[] = "Pan";
+
+	cipher_init(&cipher, method, key);
+	cipher_encode(&cipher, buffer);
+	for(int i = 0; buffer[i] != '\0'; i++){
+		printf("%x\n", buffer[i]);
+
+	}
+	cipher_uninit(&cipher);
+}*/

@@ -15,11 +15,7 @@ typedef struct{
 	FILE *fp;
 } client_t;
 
-typedef void (*client_socket_callback_t)(const char *buffer, 
-	                                   size_t buffer_size,
-	                                   void *callback_ctx);
-
-int client_init(client_t *self, const char* hostname, const char* servicename);
+int client_init(client_t *self, const char* hostname, const char* servicename, char* method, void* key);
 
 int client_uninit(client_t *self);
 

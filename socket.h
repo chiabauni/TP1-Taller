@@ -3,15 +3,16 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-//#include <stdint.h>
-//#include <unistd.h>
+
+#include "cipher.h"
 
 typedef struct{
 	int fd;
 	struct addrinfo* results_getaddr;
+	cipher_t cipher;
 } socket_t;
 
-int socket_init(socket_t *self);
+int socket_init(socket_t *self, char* method, void* key);
 
 int socket_uninit(socket_t *self);
 
@@ -25,9 +26,9 @@ int socket_accept(socket_t *listener, socket_t *peer);
 
 int socket_connect(socket_t *self);
 
-int socket_send(socket_t *self, char *buffer, size_t buffer_size);
+int socket_send(socket_t *self, char* buffer, size_t buffer_size);
 
-int socket_receive(socket_t *self, char *buffer, size_t buffer_size);
+int socket_receive(socket_t *self, char* buffer, size_t buffer_size);
 
 int socket_close(socket_t *self);
 
