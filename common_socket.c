@@ -57,14 +57,13 @@ int socket_bind(socket_t *self) {
    	for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
    		self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
    		if (self->fd == -1) continue;
-   		if (bind(self->fd, ptr->ai_addr, ptr->ai_addrlen) == 0) {
-   			printf("Conexion exitosa\n");//al final borrar este print  			
+   		if (bind(self->fd, ptr->ai_addr, ptr->ai_addrlen) == 0) {		
    			break;
    		}
    		close(self->fd);
    	}
    	if (ptr == NULL) {     
-   		fprintf(stderr, "Conexion fallida\n");//al final borrar este print
+   		fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
    		socket_close(self);        
         return -1;
     }
@@ -97,14 +96,13 @@ int socket_connect(socket_t *self) {
    	for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
    		self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
    		if (self->fd == -1) continue;
-   		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen) != -1) {
-   			printf("Conexion exitosa\n");//al final borrar este print   			
+   		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen) != -1) {  			
    			break;
    		}
    		close(self->fd);
    	}
    	if (ptr == NULL) {     
-   		fprintf(stderr, "Conexion fallida\n");//al final borrar este print
+   		fprintf(stderr,"Error in socket_connect: %s\n", strerror(errno));
         socket_close(self);
         return -1;
     }
@@ -112,14 +110,14 @@ int socket_connect(socket_t *self) {
    	return 0;
 }
 
-int socket_send(socket_t *self, unsigned char* buffer, size_t buffer_size) {
+int socket_send(socket_t *self, char* buffer, size_t buffer_size) {
 	int n = 0;
-	int status = 0;
 	while (n < buffer_size) {
+		int status = 0;
 		cipher_encode(&(self->cipher), buffer);
 		status = send(self->fd, &buffer[n], buffer_size-n, MSG_NOSIGNAL);
 		if (status == -1) {
-			printf("Error in socket_send: %s\n", strerror(errno));
+			fprintf(stderr,"Error in socket_send: %s\n", strerror(errno));
 			socket_close(self);			
 			return -1;
 		} else if (status == 0){
@@ -131,10 +129,10 @@ int socket_send(socket_t *self, unsigned char* buffer, size_t buffer_size) {
 	return 0;
 }
 
-int socket_receive(socket_t *self, unsigned char* buffer, size_t buffer_size) {
+int socket_receive(socket_t *self, char* buffer, size_t buffer_size) {
 	int n = 0;
-	int status = 0;
 	while (n < buffer_size) {
+		int status = 0;
 		status = recv(self->fd, &buffer[n], buffer_size-n, 0);
 		cipher_decode(&(self->cipher), buffer, status);
 		buffer[status] = '\0';
@@ -161,4 +159,3 @@ int socket_close(socket_t *self) {
 	}
 	return 0;
 }
-

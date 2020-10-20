@@ -10,7 +10,7 @@ static void _swap(unsigned char* x, unsigned char* y) {
     *y = temp;
 }
 
-static void _KSA(rc4_t *self, unsigned char* key, unsigned char* S) {
+static void _KSA(rc4_t *self, char* key, unsigned char* S) {
     int key_length = strlen(key);
     for (int k = 0; k < 256; k++) {
         S[k] = k;
@@ -22,8 +22,9 @@ static void _KSA(rc4_t *self, unsigned char* key, unsigned char* S) {
     }
 }
 
-static void _PRGA(rc4_t *self, unsigned char* S, char* buffer, int bytes_recieved) {
-    for(int k = 0; k < bytes_recieved; k++) {
+static void _PRGA(rc4_t *self, unsigned char* S, 
+                char* buffer, int bytes_recieved) {
+    for (int k = 0; k < bytes_recieved; k++) {
         self->i = (self->i + 1) & MAX;    
         self->j = (self->j + S[self->i]) & MAX;        
         _swap(&S[self->i], &S[self->j]);
@@ -47,7 +48,7 @@ void rc4_uninit(rc4_t *self) {
     self->n = -1;
 }
 
-void rc4_cifrado(rc4_t *self, char* buffer) {    
+void rc4_encode(rc4_t *self, char* buffer) {    
     if (self->n == 0) {
         _KSA(self,self->key, self->S);
         self->n++;
@@ -55,7 +56,7 @@ void rc4_cifrado(rc4_t *self, char* buffer) {
     _PRGA(self, self->S, buffer, strlen(buffer));
 }
 
-void rc4_descifrado(rc4_t *self, char* buffer, int bytes_recieved) {    
+void rc4_decode(rc4_t *self, char* buffer, int bytes_recieved) {    
     if (self->n == 0) {
         _KSA(self, self->key, self->S);
         self->n++;

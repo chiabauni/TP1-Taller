@@ -39,24 +39,24 @@ int cipher_uninit(cipher_t *self) {
 
 void cipher_encode(cipher_t *self, char* buffer) {
 	if (self->method == CESAR) {
-		cesar_cifrado(&(self->cipher_cesar), buffer);
+		cesar_encode(&(self->cipher_cesar), buffer);
 	} 
 	if (self->method == VIGENERE) {
-		vigenere_cifrado(&(self->cipher_vigenere), buffer);
+		vigenere_encode(&(self->cipher_vigenere), buffer);
 	}
 	if (self->method == RC4) {
-		rc4_cifrado(&(self->cipher_rc4), buffer);
+		rc4_encode(&(self->cipher_rc4), buffer);
 	}
 }
 
 void cipher_decode(cipher_t *self, char* buffer, int bytes_recieved) {
 	if (self->method == CESAR) {
-		cesar_descifrado(&(self->cipher_cesar), buffer, bytes_recieved);
+		cesar_decode(&(self->cipher_cesar), buffer, bytes_recieved);
 	} 
 	if (self->method == VIGENERE) {
-		vigenere_descifrado(&(self->cipher_vigenere), buffer, bytes_recieved);
+		vigenere_decode(&(self->cipher_vigenere), buffer, bytes_recieved);
 	}
 	if (self->method == RC4) {
-		rc4_descifrado(&(self->cipher_rc4), buffer, bytes_recieved);
+		rc4_decode(&(self->cipher_rc4), buffer, bytes_recieved);
 	}
 }

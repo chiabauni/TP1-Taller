@@ -3,7 +3,7 @@
 #include "common_vigenere.h"
 #define MAX 64
 //-------------------------------------------------------------------------
-static void _generate_key(vigenere_t *self, unsigned char* buffer,
+static void _generate_key(vigenere_t *self, char* buffer,
  						char* key, char* new_key) {
 	int j = (self->position % strlen(key));
 	for (int i = 0; buffer[i] != '\0'; i++) {
@@ -15,14 +15,14 @@ static void _generate_key(vigenere_t *self, unsigned char* buffer,
 	}
 }
 
-void vigenere_init(vigenere_t *self, unsigned char* string_key) {
+void vigenere_init(vigenere_t *self, char* string_key) {
 	self->key= string_key;
 	self->position = 0;
 }
 
 void vigenere_uninit(vigenere_t *self) {}
 
-void vigenere_cifrado(vigenere_t *self, unsigned char* buffer) {
+void vigenere_encode(vigenere_t *self, char* buffer) {
 	char new_key[MAX];
 	_generate_key(self, buffer, self->key, new_key);
 	for (int i = 0; buffer[i] != '\0'; i++) {
@@ -31,7 +31,7 @@ void vigenere_cifrado(vigenere_t *self, unsigned char* buffer) {
 	self->position += strlen(buffer);
 }
 
-void vigenere_descifrado(vigenere_t *self, unsigned char* buffer, 
+void vigenere_decode(vigenere_t *self, char* buffer, 
 						int bytes_recieved) {
 	char new_key[MAX];
 	_generate_key(self, buffer, self->key, new_key);

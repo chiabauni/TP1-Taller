@@ -2,13 +2,13 @@
 #include <string.h>
 #include "common_cesar.h"
 //-------------------------------------------------------------------------
-void cesar_init(cesar_t *self, unsigned char* string_key){
+void cesar_init(cesar_t *self, char* string_key){
 	self->string_key = string_key;
 }
 
 void cesar_uninit(cesar_t *self){}
 
-void cesar_cifrado(cesar_t *self, unsigned char* buffer) {
+void cesar_encode(cesar_t *self, char* buffer) {
 	unsigned int key = (unsigned int)(self->string_key[0]-'0');
 	for (int i = 0; buffer[i] != '\0'; i++) {		
 		unsigned char a =  ((unsigned int)buffer[i] + key)%256;		
@@ -16,7 +16,8 @@ void cesar_cifrado(cesar_t *self, unsigned char* buffer) {
 	}
 }
 
-void cesar_descifrado(cesar_t *self, unsigned char* buffer, int bytes_recieved) {
+void cesar_decode(cesar_t *self, char* buffer, 
+					int bytes_recieved) {
 	unsigned int key = (unsigned int)(self->string_key[0]-'0');	
 	for (int i = 0; i < bytes_recieved; i++) {		
 		if (buffer[i] < key) {

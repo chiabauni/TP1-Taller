@@ -2,14 +2,12 @@
 #include <errno.h>
 #include <string.h>
 #include "server_socket.h"
-
 #define BUFF_SIZE 64
-
-
-int server_init(server_t *self, const char* servicename, char* method, void* key) {
+//-------------------------------------------------------------------------
+int server_init(server_t *self, const char* servicename, 
+				char* method, void* key) {
 	self->hostname = 0;
 	self->servicename = servicename;
-
 	socket_t socket, peer;
 	if (socket_init(&socket, method, key)) {
 		return -1;
@@ -17,10 +15,8 @@ int server_init(server_t *self, const char* servicename, char* method, void* key
 	if (socket_init(&peer, method, key)) {
 		return -1;
 	}
-
 	self->sockt = socket;
 	self->peer = peer;
-
 	return 0;
 }
 
@@ -56,12 +52,9 @@ int server_receive(server_t *self) {
 	while (status == 0) {
 		status = socket_receive(&(self->peer), buffer, BUFF_SIZE);
 	}
-
 	if (status != -1 && status != 1) {
 		fprintf(stderr, "Error in server_receive:%s\n", strerror(status));
 		return -1;
 	}
 	return 0;
 }
-
-
