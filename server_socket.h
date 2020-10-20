@@ -16,8 +16,8 @@ typedef struct{
 
 /* Recibe un server_t, el port, el nombre del metodo 
 con el que se va a encriptar y la clave para encriptar.
-Inicializa el server pasado por parametro con los otros 
-parametros pasados. Devuelve -1 en caso de error, sino devuelve 0.  */
+Inicializa el server pasado por parametro con sus respectivos 
+atributos. Devuelve -1 en caso de error, sino devuelve 0.  */
 int server_init(server_t *self, const char* servicename, 
 				char* method, void* key);
 

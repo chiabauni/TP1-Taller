@@ -47,7 +47,6 @@ int socket_get_addresses(socket_t *self, const char *host,
 }
 
 int socket_bind(socket_t *self) {
-	//struct addrinfo *ptr;
 	self->fd = socket((self->results_getaddr)->ai_family, 
 						(self->results_getaddr)->ai_socktype,
     					(self->results_getaddr)->ai_protocol);
@@ -63,20 +62,6 @@ int socket_bind(socket_t *self) {
    		freeaddrinfo(self->results_getaddr);        
         return -1;
     }
-   	/*for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
-   		self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-   		if (self->fd == -1) continue;
-   		if (bind(self->fd, ptr->ai_addr, ptr->ai_addrlen) == 0) {		
-   			break;
-   		}
-   		close(self->fd);
-   	}
-   	if (ptr == NULL) {     
-   		fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
-   		socket_close(self);
-   		freeaddrinfo(self->results_getaddr);        
-        return -1;
-    }*/
     if (bind(self->fd, (self->results_getaddr)->ai_addr, 
     	(self->results_getaddr)->ai_addrlen)) {
     	fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
@@ -109,19 +94,6 @@ int socket_accept(socket_t *listener, socket_t *peer) {
 int socket_connect(socket_t *self) {
 	bool connected = false;
 	struct addrinfo *ptr;
-   	/*for (ptr = self->results_getaddr; ptr != NULL; ptr = ptr->ai_next) {
-   		self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
-   		if (self->fd == -1) continue;
-   		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen) != -1) {  			
-   			break;
-   		}
-   		close(self->fd);
-   	}
-   	if (ptr == NULL) {     
-   		fprintf(stderr,"Error in socket_connect: %s\n", strerror(errno));
-        socket_close(self);
-        return -1;
-    }*/
     for (ptr = self->results_getaddr; ptr != NULL && connected == false; 
     	ptr = ptr->ai_next) {
     	self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
@@ -146,7 +118,6 @@ int socket_send(socket_t *self, char* buffer, size_t buffer_size) {
 	int n = 0;
 	while (n < buffer_size) {
 		int status = 0;
-		//cipher_encode(&(self->cipher), buffer, buffer_size);
 		status = send(self->fd, &buffer[n], buffer_size-n, MSG_NOSIGNAL);
 		if (status == -1) {
 			fprintf(stderr,"Error in socket_send: %s\n", strerror(errno));
@@ -161,28 +132,21 @@ int socket_send(socket_t *self, char* buffer, size_t buffer_size) {
 	return 0;
 }
 
-int socket_receive(socket_t *self, char* buffer, int buffer_size,
-				socket_callback_t callback, void *callback_ctx){
-	int n = 0;
+ssize_t socket_receive(socket_t *self, char* buffer, int buffer_size){
+	ssize_t n = 0;
 	while (n < buffer_size) {
-		int status = 0;
-		status = recv(self->fd, &buffer[n], buffer_size-n, 0);
-		callback(buffer, (size_t)status, callback_ctx);
-		//cipher_decode(&(self->cipher), buffer, status);
-		//buffer[status] = '\0';
-		//printf("%s", buffer);
-		//fwrite(buffer, 1, buffer_size, stdout);
+		ssize_t status = recv(self->fd, &buffer[n], buffer_size-n, 0);
 		if (status == -1) {
 			fprintf(stderr, "Error in socket_receive:%s\n", strerror(status));    			
    			socket_close(self);
    			return -1;
 		} else if (status == 0) {
-			return 1;
+			return n;
 		} else {
 			n += status;
 		}
 	}
-	return 0;
+	return n;
 }
 
 int socket_close(socket_t *self) {

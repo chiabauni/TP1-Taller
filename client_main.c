@@ -2,10 +2,9 @@
 #include "client_socket.h"
 #define ARGUMENT_ERROR 1 //codigos de retorno para manejar errores
 #define INIT_ERROR 2
-#define INPUT_ERROR 3
-#define CONNECT_ERROR 4
-#define SEND_ERROR 5
-#define UNINIT_ERROR 6
+#define CONNECT_ERROR 3
+#define SEND_ERROR 4
+#define UNINIT_ERROR 5
 //-------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
 	client_t client;
@@ -18,9 +17,6 @@ int main(int argc, char *argv[]) {
 		&argv[4][6], argv[5])) {
 		return INIT_ERROR;
 	}
-	/*if (client_get_input(&client, argv[5])) {
-		return INPUT_ERROR;
-	}*/
 	if (client_connect(&client)) {
 		return CONNECT_ERROR;
 	}

@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include "server_socket.h"
-#define ARGUMENT_ERROR 1
+#define ARGUMENT_ERROR 1//codigos de retorno para manejar errores
 #define INIT_ERROR 2
 #define CONNECT_ERROR 3
 #define RECEIVE_ERROR 4
-#define UNINIT_ERROR 2
+#define UNINIT_ERROR 5
 //-------------------------------------------------------------------------
 int main(int argc, char *argv[]) {
   if (argc != 4) {

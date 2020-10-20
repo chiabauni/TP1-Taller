@@ -52,11 +52,14 @@ void cipher_encode(cipher_t *self, char* buffer, size_t buffer_size) {
 void cipher_decode(cipher_t *self, char* buffer, int bytes_recieved) {
 	if (self->method == CESAR) {
 		cesar_decode(&(self->cipher_cesar), buffer, bytes_recieved);
+		buffer[bytes_recieved]='\0';
 	} 
 	if (self->method == VIGENERE) {
 		vigenere_decode(&(self->cipher_vigenere), buffer, bytes_recieved);
+		buffer[bytes_recieved]='\0';
 	}
 	if (self->method == RC4) {
 		rc4_decode(&(self->cipher_rc4), buffer, bytes_recieved);
+		buffer[bytes_recieved]='\0';
 	}
 }
