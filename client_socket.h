@@ -4,19 +4,21 @@
 #include <stdint.h>
 #include <unistd.h>
 #include "common_socket.h"
+#include "common_file_encryptor.h"
 //-------------------------------------------------------------------------
 typedef struct{
 	socket_t sockt;
 	const char* hostname;
 	const char* servicename;
-	FILE *fp;
+	file_encryptor_t file_encryptor;
 } client_t;
 
 /* Recibe un client_t, el host, el port, el nombre del metodo 
 con el que se va a encriptar y la clave para encriptar. 
 Inicializa el client_t, si no hay errores devuelve 0 sino devuelve -1 */
 int client_init(client_t *self, const char* hostname, 
-				const char* servicename, char* method, char* key);
+				const char* servicename, char* method, 
+				char* key, const char* file_name);
 
 /* Recibe un client_t y destruye el cliente liberando los recursos 
 utilizados, si no hay errores devuelve 0 sino devuelve -1  */
@@ -26,7 +28,7 @@ int client_uninit(client_t *self);
 se estabalece el puntero fp en el puntero devuelto por fopen
 (si es por stdin se establece el puntero en stdin). 
 Si no hay errores devuelve 0 sino devuelve -1 */
-int client_get_input(client_t *self, const char* file_name);
+/*int client_get_input(client_t *self, const char* file_name);*/
 
 /* Recibe un client_t intenta conectar el cliente con el servidor, 
 si falla devuelve -1 sino devuelve 0. */

@@ -14,12 +14,13 @@ int main(int argc, char *argv[]) {
 				" <server-port> --method=<method> --key=<key>\n");
 		return ARGUMENT_ERROR;
 	}
-	if (client_init(&client, argv[1], argv[2], &argv[3][9], &argv[4][6])) {
+	if (client_init(&client, argv[1], argv[2], &argv[3][9], 
+		&argv[4][6], argv[5])) {
 		return INIT_ERROR;
 	}
-	if (client_get_input(&client, argv[5])) {
+	/*if (client_get_input(&client, argv[5])) {
 		return INPUT_ERROR;
-	}
+	}*/
 	if (client_connect(&client)) {
 		return CONNECT_ERROR;
 	}

@@ -48,12 +48,12 @@ void rc4_uninit(rc4_t *self) {
     self->n = -1;
 }
 
-void rc4_encode(rc4_t *self, char* buffer) {    
+void rc4_encode(rc4_t *self, char* buffer, size_t buffer_size) {    
     if (self->n == 0) {
         _KSA(self,self->key, self->S);
         self->n++;
     }
-    _PRGA(self, self->S, buffer, strlen(buffer));
+    _PRGA(self, self->S, buffer, (int)buffer_size);
 }
 
 void rc4_decode(rc4_t *self, char* buffer, int bytes_recieved) {    

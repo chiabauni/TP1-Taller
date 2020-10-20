@@ -4,12 +4,14 @@
 #include <stdint.h>
 #include <unistd.h>
 #include "common_socket.h"
+#include "common_file_encryptor.h"
 //-------------------------------------------------------------------------
 typedef struct{
 	socket_t sockt;
 	socket_t peer;
 	const char* hostname;
 	const char* servicename;
+	file_encryptor_t file_encryptor;
 } server_t;
 
 /* Recibe un server_t, el port, el nombre del metodo 

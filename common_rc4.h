@@ -20,7 +20,7 @@ void rc4_uninit(rc4_t *self);
 
 /* Recibe un rc4_t y un buffer con el mensaje a codificar. 
 Codifica el buffer */
-void rc4_encode(rc4_t *self, char* buffer);
+void rc4_encode(rc4_t *self, char* buffer, size_t buffer_size);
 
 /* Recibe un rc4_t, un buffer con el mensaje a codificar 
 y la cantidad de bytes recibidos. Decodifica el buffer */

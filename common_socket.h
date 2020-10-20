@@ -7,13 +7,16 @@
 typedef struct{
 	int fd;
 	struct addrinfo* results_getaddr;
-	cipher_t cipher;
 } socket_t;
+
+typedef void (*socket_callback_t)(char *buffer,
+								size_t buffer_size,
+	                            void *callback_ctx);
 
 /* Recibe un socket_t , el nombre del metodo con el que se va a encriptar
  y la clave para encriptar. Inicializa el client_t y el cifrado si no hay errores
  devuelve 0 sino devuelve -1 */
-int socket_init(socket_t *self, char* method, char* key);
+int socket_init(socket_t *self);
 
 /* Recibe un socket_t, destruye el socket y cifrado liberando los recursos 
 utilizados, si no hay errores devuelve 0 sino devuelve -1 */
@@ -50,7 +53,8 @@ int socket_send(socket_t *self, char* buffer, size_t buffer_size);
 
 /* Recibe un socket_t, un buffer y longitud de bytes a recibir a traves 
 del socket. Si no hay errores devuelve 0 sino devuelve -1 */
-int socket_receive(socket_t *self, char* buffer, size_t buffer_size);
+int socket_receive(socket_t *self, char* buffer, int buffer_size,
+				socket_callback_t callback, void *callback_ctx);
 
 /* Recibe un socket_t y cierra el canal solicitado del socket, liberando
  los recursos utilizados. Si no hay errores devuelve 0 sino devuelve -1 */

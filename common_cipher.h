@@ -24,7 +24,7 @@ int cipher_uninit(cipher_t *self);
 
 /* Recibe un cipher_t y un buffer y elige segun el metodo seleccionado
 por el usuario la funcion de cifrado a utilizar, enviandole el buffer. */
-void cipher_encode(cipher_t *self, char* buffer);
+void cipher_encode(cipher_t *self, char* buffer, size_t buffer_size);
 
 /* Recibe un cipher_t , un buffer y su longitud en bytes. Elige segun
 el metodo seleccionado por el usuario la funcion de descifrado a utilizar,

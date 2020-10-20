@@ -16,7 +16,7 @@ void vigenere_uninit(vigenere_t *self);
 
 /* Recibe un vigenere_t y un buffer con el mensaje a codificar. 
 Codifica el buffer */
-void vigenere_encode(vigenere_t *self, char* buffer);
+void vigenere_encode(vigenere_t *self, char* buffer, size_t buffer_size);
 
 /* Recibe un vigenere_t, un buffer con el mensaje a codificar 
 y la cantidad de bytes recibidos. Decodifica el buffer */

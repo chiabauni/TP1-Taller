@@ -37,15 +37,15 @@ int cipher_uninit(cipher_t *self) {
 	return 0;
 }
 
-void cipher_encode(cipher_t *self, char* buffer) {
+void cipher_encode(cipher_t *self, char* buffer, size_t buffer_size) {
 	if (self->method == CESAR) {
-		cesar_encode(&(self->cipher_cesar), buffer);
+		cesar_encode(&(self->cipher_cesar), buffer, buffer_size);
 	} 
 	if (self->method == VIGENERE) {
-		vigenere_encode(&(self->cipher_vigenere), buffer);
+		vigenere_encode(&(self->cipher_vigenere), buffer, buffer_size);
 	}
 	if (self->method == RC4) {
-		rc4_encode(&(self->cipher_rc4), buffer);
+		rc4_encode(&(self->cipher_rc4), buffer, buffer_size);
 	}
 }
 

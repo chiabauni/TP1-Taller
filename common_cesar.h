@@ -15,7 +15,7 @@ void cesar_uninit(cesar_t *self);
 
 /* Recibe un cesar_t y un buffer con el mensaje a codificar. 
 Codifica el buffer */
-void cesar_encode(cesar_t *self, char* buffer);
+void cesar_encode(cesar_t *self, char* buffer, size_t buffer_size);
 
 /* Recibe un cesar_t, un buffer con el mensaje a codificar 
 y la cantidad de bytes recibidos. Decodifica el buffer */
