@@ -9,7 +9,8 @@ typedef struct {
 }vigenere_t;
 
 /* Recibe un vigenere_t y la clave para la encriptacion, inicializa
-los atributos correspondientes */
+los atributos correspondientes. La clave que recibo no se copia unicamente
+utilizo un puntero a la misma. */
 void vigenere_init(vigenere_t *self, char* string_key);
 
 /* Recibe un vigenere_t */

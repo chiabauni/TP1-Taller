@@ -8,7 +8,8 @@ typedef struct {
 }cesar_t;
 
 /* Recibe un cesar_t y la clave para la encriptacion, inicializa
-los atributos correspondientes */
+los atributos correspondientes. La clave que recibo no se copia unicamente
+utilizo un puntero a la misma. */
 void cesar_init(cesar_t *self, char* string_key);
 
 /* Recibe un cesar_t */

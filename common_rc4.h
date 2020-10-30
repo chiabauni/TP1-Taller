@@ -12,7 +12,8 @@ typedef struct {
 } rc4_t;
 
 /* Recibe un rc4_t y la clave para la encriptacion, inicializa
-los atributos correspondientes */
+los atributos correspondientes. La clave que recibo no se copia unicamente
+utilizo un puntero a la misma. */
 void rc4_init(rc4_t *self, char* key);
 
 /* Recibe un rc4_t */
