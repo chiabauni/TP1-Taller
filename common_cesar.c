@@ -8,7 +8,8 @@ void cesar_init(cesar_t *self, char* string_key){
 
 void cesar_uninit(cesar_t *self){}
 
-void cesar_encode(cesar_t *self, char* buffer, size_t buffer_size, bool encode) {
+void cesar_encode(cesar_t *self, char* buffer, 
+					size_t buffer_size, bool encode) {
 	unsigned int key = (unsigned int)(self->string_key[0]-'0');
 	for (int i = 0; i < buffer_size; i++) {		
 		if (encode) {
