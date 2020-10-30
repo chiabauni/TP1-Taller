@@ -14,14 +14,12 @@ int socket_init(socket_t *self) {
 	if (!self) {
 		return -1;
 	}
-	self->fd = 0;		
+	self->fd = -1;		
 	return 0;
 }
 
 int socket_uninit(socket_t *self) {
-	if (socket_close(self)) {
-		return -1;
-	}
+	self->fd = -1;		
 	return 0;
 }
 
@@ -43,39 +41,52 @@ int socket_get_addresses(socket_t *self, const char *host,
    		freeaddrinfo(self->results_getaddr);
    		return -1;
    	}
+   	if (is_server) {
+   		status = socket_bind(self);
+   	} else {
+   		status = socket_connect(self);
+   	}
+   	freeaddrinfo(self->results_getaddr);
+   	if (status != 0) {
+   		return -1;
+   	}
    	return 0;
 }
 
 int socket_bind(socket_t *self) {
-	self->fd = socket((self->results_getaddr)->ai_family, 
+	bool connected = false;
+	struct addrinfo *ptr;
+	for (ptr = self->results_getaddr; ptr != NULL && connected == false; 
+    	ptr = ptr->ai_next) {
+		self->fd = socket((self->results_getaddr)->ai_family, 
 						(self->results_getaddr)->ai_socktype,
     					(self->results_getaddr)->ai_protocol);
-   	if (self->fd == -1) {
-   		fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
-   		freeaddrinfo(self->results_getaddr);
-   		return -1;  
-   	}
-	int val = 1;
-   	if (setsockopt(self->fd, SOL_SOCKET, SO_REUSEADDR, 
-   		&val, sizeof(val))) {     
-   		fprintf(stderr,"Error in socket_time_wait: %s\n", strerror(errno));
-   		freeaddrinfo(self->results_getaddr);        
-        return -1;
-    }
-    if (bind(self->fd, (self->results_getaddr)->ai_addr, 
-    	(self->results_getaddr)->ai_addrlen)) {
-    	fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
-   		freeaddrinfo(self->results_getaddr);        
-        return -1;
-    }
-   	freeaddrinfo(self->results_getaddr);
-   	return 0;
+	   	if (self->fd == -1) {
+	   		fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));
+	   		return -1;  
+	   	}
+		int val = 1;
+	   	if (setsockopt(self->fd, SOL_SOCKET, SO_REUSEADDR, 
+	   		&val, sizeof(val))) {     
+	   		fprintf(stderr,"Error in socket_time_wait: %s\n", strerror(errno));       
+	        return -1;
+	    }
+	    if (bind(self->fd, (self->results_getaddr)->ai_addr, 
+	    	(self->results_getaddr)->ai_addrlen)) {
+	    	fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));       
+	        return -1;
+	    } else {
+   			connected = true;
+   		}
+	}
+   	return (!connected);
 }
 
 int socket_listen(socket_t *self) {
 	int status = listen(self->fd, SOCKTS_EN_COLA);
 	if(status) {
 		fprintf(stderr, "Error in socket_listen:%s\n", strerror(status));
+		socket_close(self);
 		return -1;
 	}
    	return 0;
@@ -85,6 +96,7 @@ int socket_accept(socket_t *listener, socket_t *peer) {
 	int accepted = accept(listener->fd, NULL, NULL); 
 	if (accepted == -1) {
 		fprintf(stderr, "Error in socket_accept:%s\n", strerror(accepted));
+		socket_close(listener);
 		return -1;
 	}
    	peer->fd = accepted;   	
@@ -98,8 +110,7 @@ int socket_connect(socket_t *self) {
     	ptr = ptr->ai_next) {
     	self->fd = socket(ptr->ai_family, ptr->ai_socktype, ptr->ai_protocol);
    		if (self->fd == -1) {
-   			fprintf(stderr,"Error in socket_connect: %s\n", strerror(errno));
-   			freeaddrinfo(self->results_getaddr);        
+   			fprintf(stderr,"Error in socket_connect: %s\n", strerror(errno));       
         	return -1;
    		}
    		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen)) {
@@ -110,7 +121,6 @@ int socket_connect(socket_t *self) {
    			connected = true;
    		}
     }
-   	freeaddrinfo(self->results_getaddr);
    	return (!connected);
 }
 

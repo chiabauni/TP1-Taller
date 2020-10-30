@@ -9,28 +9,32 @@ typedef struct{
 	struct addrinfo* results_getaddr;
 } socket_t;
 
+/* socket_init y socket_uninit ahora establecen correctamente el fd en su
+valor invalido(-1) y se mejora el RAII y la simetria */
 /* Recibe un socket_t, inicializa el client_t y lo atributos correspondientes
- si no hay errores devuelve 0 sino devuelve -1 */
+si no hay errores devuelve 0 sino devuelve -1 */
 int socket_init(socket_t *self);
 
-/* Recibe un socket_t, destruye el socket liberando los recursos utilizados,
+/* Recibe un socket_t, destruye el socket liberando los recursos utilizados, es
 si no hay errores devuelve 0 sino devuelve -1 */
 int socket_uninit(socket_t *self);
 
 /* Recibe un socket_t, el host, el port y un booleano que indica si se trata 
 de un server(true) o no. Aplicando el getaddrinfo se obtiene la lista 
-de direcciones sobre las cuales se intentara la conexion. Si no hay errores
- devuelve 0 sino devuelve -1 */
+de direcciones sobre las cuales se intentara la conexion. Si se trata de un
+server llama a la funcion bind, si se trata de un clinete se llama a la 
+funcion connect. Si no hay errores devuelve 0 sino devuelve -1 */
 int socket_get_addresses(socket_t *self, const char *host, 
 						const char *service, bool is_server);
 
 /* Recibe un socket_t y enlaza el socket con el resultado obtenido en 
-get_addresses. Si no hay errores devuelve 0 sino devuelve -1 */
+get_addresses. Ademas agrego la iteracion sobre la lista de getaddrinfo
+que faltaba. Si no hay errores devuelve 0 sino devuelve -1 */
 int socket_bind(socket_t *self);
 
 /* Recibe un socket_t y establece el servidor a la escucha de clientes
 (en este caso como se debe conectar unicamente con uno, solo hay un lugar
- en la cola de espera). Si no hay errores devuelve 0 sino devuelve -1 */
+en la cola de espera). Si no hay errores devuelve 0 sino devuelve -1 */
 int socket_listen(socket_t *self);
 
 /* Recibe un socket_t aceptador(server) y un socket_t peer correspondiente 
@@ -51,7 +55,7 @@ del socket. Si no hay errores devuelve 0 sino devuelve -1 */
 ssize_t socket_receive(socket_t *self, char* buffer, int buffer_size);
 
 /* Recibe un socket_t y cierra el canal solicitado del socket, liberando
- los recursos utilizados. Si no hay errores devuelve 0 sino devuelve -1 */
+los recursos utilizados. Si no hay errores devuelve 0 sino devuelve -1 */
 int socket_close(socket_t *self);
 //-------------------------------------------------------------------------
 #endif

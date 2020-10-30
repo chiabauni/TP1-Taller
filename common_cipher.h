@@ -15,7 +15,8 @@ typedef struct {
 
 /* Recibe un cipher_t, el nombre del metodo con el que se va a encriptar
  y la clave para encriptar. Se inicializa el metodo de encriptacion segun
- cual haya sido elegido, si no hay errores devuelve 0 sino devuelve -1 */
+ cual haya sido elegido. Ademas devuelve -1 si el metodo ingresado no 
+ es valido. Si no hay errores devuelve 0 sino devuelve -1 */
 int cipher_init(cipher_t *self, char* method, char* key);
 
 /* Recibe un cipher_t y libera los recursos utilizados. Si no hay errores

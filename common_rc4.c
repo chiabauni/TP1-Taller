@@ -30,9 +30,7 @@ static void _PRGA(rc4_t *self, unsigned char* S,
         _swap(&S[self->i], &S[self->j]);
         int a = S[(S[self->i] + S[self->j]) & MAX];
         buffer[k] = buffer[k] ^ a;
-        buffer[bytes_recieved]='\0';
     }
-    buffer[bytes_recieved]='\0';
 }
 
 void rc4_init(rc4_t *self, char* key){
@@ -54,12 +52,4 @@ void rc4_encode(rc4_t *self, char* buffer, size_t buffer_size) {
         self->n++;
     }
     _PRGA(self, self->S, buffer, (int)buffer_size);
-}
-
-void rc4_decode(rc4_t *self, char* buffer, int bytes_recieved) {    
-    if (self->n == 0) {
-        _KSA(self, self->key, self->S);
-        self->n++;
-    }
-    _PRGA(self, self->S, buffer, bytes_recieved);
 }

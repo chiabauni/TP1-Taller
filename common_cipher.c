@@ -12,15 +12,15 @@ int cipher_init(cipher_t *self, char* method, char* key) {
 	if (method[0] == cesar[0]) {
 		self->method = CESAR;
 		cesar_init(&(self->cipher_cesar), key);
-	} 
-	if (method[0] == vigenere[0]) {
+	} else if (method[0] == vigenere[0]) {
 		self->method = VIGENERE;
 		vigenere_init(&(self->cipher_vigenere), key);
-	} 
-	if (method[0] == rc4[0]) {
+	} else if (method[0] == rc4[0]) {
 		self->method = RC4;
 		rc4_init(&(self->cipher_rc4), key);
-	} 
+	} else {
+		return -1;
+	}
 	return 0;
 }
 
@@ -39,10 +39,10 @@ int cipher_uninit(cipher_t *self) {
 
 void cipher_encode(cipher_t *self, char* buffer, size_t buffer_size) {
 	if (self->method == CESAR) {
-		cesar_encode(&(self->cipher_cesar), buffer, buffer_size);
+		cesar_encode(&(self->cipher_cesar), buffer, buffer_size, 1);
 	} 
 	if (self->method == VIGENERE) {
-		vigenere_encode(&(self->cipher_vigenere), buffer, buffer_size);
+		vigenere_encode(&(self->cipher_vigenere), buffer, buffer_size, 1);
 	}
 	if (self->method == RC4) {
 		rc4_encode(&(self->cipher_rc4), buffer, buffer_size);
@@ -51,15 +51,12 @@ void cipher_encode(cipher_t *self, char* buffer, size_t buffer_size) {
 
 void cipher_decode(cipher_t *self, char* buffer, int bytes_recieved) {
 	if (self->method == CESAR) {
-		cesar_decode(&(self->cipher_cesar), buffer, bytes_recieved);
-		buffer[bytes_recieved]='\0';
+		cesar_encode(&(self->cipher_cesar), buffer, bytes_recieved, 0);
 	} 
 	if (self->method == VIGENERE) {
-		vigenere_decode(&(self->cipher_vigenere), buffer, bytes_recieved);
-		buffer[bytes_recieved]='\0';
+		vigenere_encode(&(self->cipher_vigenere), buffer, bytes_recieved, 0);
 	}
 	if (self->method == RC4) {
-		rc4_decode(&(self->cipher_rc4), buffer, bytes_recieved);
-		buffer[bytes_recieved]='\0';
+		rc4_encode(&(self->cipher_rc4), buffer, bytes_recieved);
 	}
 }

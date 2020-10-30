@@ -4,7 +4,10 @@
 //-------------------------------------------------------------------------
 int file_encryptor_init(file_encryptor_t *self, bool is_client, 
 						char* method, char* key, const char* file_name) {
-	cipher_init(&(self->cipher), method, key);
+	if (cipher_init(&(self->cipher), method, key)) {
+		fprintf(stderr, "Error in file_encryptor_init: invalid method\n");
+		return -1;
+	}
 	if (is_client) {
 		if (file_name != NULL) {
 			self->fp = fopen(file_name, "rb");
@@ -50,7 +53,6 @@ int file_encryptor_encrypt(file_encryptor_t *self,
 int file_encryptor_decrypt(file_encryptor_t *self, 
 							char* buffer, size_t bytes_received) {
 	cipher_decode(&(self->cipher), buffer, bytes_received);
-	buffer[bytes_received] = '\0';
-	printf("%s", buffer);
+	fwrite(buffer, 1, bytes_received, stdout);
 	return 0;
 }

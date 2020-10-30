@@ -22,27 +22,19 @@ void vigenere_init(vigenere_t *self, char* string_key) {
 
 void vigenere_uninit(vigenere_t *self) {}
 
-void vigenere_encode(vigenere_t *self, char* buffer, size_t buffer_size) {
+void vigenere_encode(vigenere_t *self, char* buffer, 
+					size_t buffer_size, bool encode) {
 	char new_key[MAX];
 	_generate_key(self, buffer, self->key, new_key, (int)buffer_size);
 	for (int i = 0; i < buffer_size; i++) {
-		buffer[i] = ((unsigned int)buffer[i] + (unsigned int)new_key[i])%256;
+		unsigned char x = ((unsigned int)buffer[i]-(unsigned int)new_key[i]);
+		if (encode) {
+			buffer[i] = ((unsigned int)buffer[i]+(unsigned int)new_key[i])%256;
+		} else if (buffer[i] < new_key[i]) {
+				buffer[i] = (x + 256) % 256;			
+		} else {
+				buffer[i]  = x % 256;
+		}
 	}
 	self->position += buffer_size;
-}
-
-void vigenere_decode(vigenere_t *self, char* buffer, 
-						int bytes_recieved) {
-	char new_key[MAX];
-	_generate_key(self, buffer, self->key, new_key, bytes_recieved);
-	for (int i = 0; i < bytes_recieved; i++) {
-		unsigned char x = ((unsigned int) buffer[i] - (unsigned int)new_key[i]);		
-		if (buffer[i] < new_key[i]) {
-				buffer[i] = (x + 256);			
-		} else {
-				buffer[i]  = x;
-		}
-		buffer[i] = buffer[i]%256; 
-	}
-	self->position += bytes_recieved;
 }

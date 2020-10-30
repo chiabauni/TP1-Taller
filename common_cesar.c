@@ -8,19 +8,12 @@ void cesar_init(cesar_t *self, char* string_key){
 
 void cesar_uninit(cesar_t *self){}
 
-void cesar_encode(cesar_t *self, char* buffer, size_t buffer_size) {
+void cesar_encode(cesar_t *self, char* buffer, size_t buffer_size, bool encode) {
 	unsigned int key = (unsigned int)(self->string_key[0]-'0');
 	for (int i = 0; i < buffer_size; i++) {		
-		unsigned char a =  ((unsigned int)buffer[i] + key)%256;		
-		buffer[i] = a;
-	}
-}
-
-void cesar_decode(cesar_t *self, char* buffer, 
-					int bytes_recieved) {
-	unsigned int key = (unsigned int)(self->string_key[0]-'0');	
-	for (int i = 0; i < bytes_recieved; i++) {		
-		if (buffer[i] < key) {
+		if (encode) {
+			buffer[i] =  ((unsigned int)buffer[i] + key)%256;
+		} else if (buffer[i] < key) {
 			int x = ((unsigned int)buffer[i] - key);			
 			buffer[i] = (unsigned char) (x + 256);			
 		} else {

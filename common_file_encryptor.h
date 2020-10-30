@@ -40,8 +40,8 @@ int file_encryptor_encrypt(file_encryptor_t *self,
 	                    	void *callback_ctx);
 
 /* Recibe un file_encryptor_t, un buffer y longitud de bytes a desencriptar, 
-se desencripta y se imprime el buffer. Devuelve -1 en caso de error 
-sino devuelve 0. */
+se desencripta y se imprime el buffer. Ademas cambio la manera de imprimir 
+el buffer utilizando fwrite. Devuelve -1 en caso de error sino devuelve 0. */
 int file_encryptor_decrypt(file_encryptor_t *self, 
 							char* buffer, size_t bytes_received);
 //-------------------------------------------------------------------------

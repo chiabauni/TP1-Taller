@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "server_socket.h"
+#include "server.h"
 #define ARGUMENT_ERROR 1//codigos de retorno para manejar errores
 #define INIT_ERROR 2
 #define CONNECT_ERROR 3

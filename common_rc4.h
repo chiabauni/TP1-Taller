@@ -18,12 +18,10 @@ void rc4_init(rc4_t *self, char* key);
 /* Recibe un rc4_t */
 void rc4_uninit(rc4_t *self);
 
-/* Recibe un rc4_t y un buffer con el mensaje a codificar. 
-Codifica el buffer */
+/* Recibe un rc4_t, un buffer con el mensaje a codificar y un 
+booleano que indica true si el mensaje de debe codificar y false 
+si el mensaje se debe decodificar. Codifica/Decodifica el buffer 
+segun corresponda*/
 void rc4_encode(rc4_t *self, char* buffer, size_t buffer_size);
-
-/* Recibe un rc4_t, un buffer con el mensaje a codificar 
-y la cantidad de bytes recibidos. Decodifica el buffer */
-void rc4_decode(rc4_t *self, char* buffer, int bytes_recieved);
 //-------------------------------------------------------------------------
 #endif
