@@ -53,9 +53,5 @@ int socket_send(socket_t *self, char* buffer, size_t buffer_size);
 /* Recibe un socket_t, un buffer y longitud de bytes a recibir a traves 
 del socket. Si no hay errores devuelve 0 sino devuelve -1 */
 ssize_t socket_receive(socket_t *self, char* buffer, int buffer_size);
-
-/* Recibe un socket_t y cierra el canal solicitado del socket, liberando
-los recursos utilizados. Si no hay errores devuelve 0 sino devuelve -1 */
-int socket_close(socket_t *self);
 //-------------------------------------------------------------------------
 #endif

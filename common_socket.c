@@ -19,7 +19,12 @@ int socket_init(socket_t *self) {
 }
 
 int socket_uninit(socket_t *self) {
-	self->fd = -1;		
+	if (shutdown(self->fd, SHUT_RDWR)) {
+		return -1;
+	}	
+	if(close(self->fd)) {
+		return -1;
+	}		
 	return 0;
 }
 
@@ -48,6 +53,7 @@ int socket_get_addresses(socket_t *self, const char *host,
    	}
    	freeaddrinfo(self->results_getaddr);
    	if (status != 0) {
+   		close(self->fd);
    		return -1;
    	}
    	return 0;
@@ -73,7 +79,7 @@ int socket_bind(socket_t *self) {
 	    }
 	    if (bind(self->fd, (self->results_getaddr)->ai_addr, 
 	    	(self->results_getaddr)->ai_addrlen)) {
-	    	fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));       
+	    	fprintf(stderr,"Error in socket_bind: %s\n", strerror(errno));      
 	        return -1;
 	    } else {
    			connected = true;
@@ -86,7 +92,7 @@ int socket_listen(socket_t *self) {
 	int status = listen(self->fd, SOCKTS_EN_COLA);
 	if(status) {
 		fprintf(stderr, "Error in socket_listen:%s\n", strerror(status));
-		socket_close(self);
+		close(self->fd);
 		return -1;
 	}
    	return 0;
@@ -96,7 +102,7 @@ int socket_accept(socket_t *listener, socket_t *peer) {
 	int accepted = accept(listener->fd, NULL, NULL); 
 	if (accepted == -1) {
 		fprintf(stderr, "Error in socket_accept:%s\n", strerror(accepted));
-		socket_close(listener);
+		close(listener->fd);
 		return -1;
 	}
    	peer->fd = accepted;   	
@@ -115,7 +121,7 @@ int socket_connect(socket_t *self) {
    		}
    		if (connect(self->fd, ptr->ai_addr, ptr->ai_addrlen)) {
    			fprintf(stderr,"Error in socket_connect: %s\n", strerror(errno));
-   			socket_close(self);
+   			close(self->fd);
    			return -1;
    		} else {
    			connected = true;
@@ -131,7 +137,7 @@ int socket_send(socket_t *self, char* buffer, size_t buffer_size) {
 		status = send(self->fd, &buffer[n], buffer_size-n, MSG_NOSIGNAL);
 		if (status == -1) {
 			fprintf(stderr,"Error in socket_send: %s\n", strerror(errno));
-			socket_close(self);			
+			close(self->fd);		
 			return -1;
 		} else if (status == 0){
 			return 0;
@@ -148,7 +154,7 @@ ssize_t socket_receive(socket_t *self, char* buffer, int buffer_size){
 		ssize_t status = recv(self->fd, &buffer[n], buffer_size-n, 0);
 		if (status == -1) {
 			fprintf(stderr, "Error in socket_receive:%s\n", strerror(status));    			
-   			socket_close(self);
+   			close(self->fd);
    			return -1;
 		} else if (status == 0) {
 			return n;
@@ -159,12 +165,3 @@ ssize_t socket_receive(socket_t *self, char* buffer, int buffer_size){
 	return n;
 }
 
-int socket_close(socket_t *self) {
-	if (shutdown(self->fd, SHUT_RDWR)) {
-		return -1;
-	}	
-	if(close(self->fd)) {
-		return -1;
-	}
-	return 0;
-}
